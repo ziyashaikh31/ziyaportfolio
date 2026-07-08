@@ -77,7 +77,7 @@ function ProfileCard() {
       <div className="relative z-10 p-6 rounded-[22.5px] bg-slate-950/80 backdrop-blur-xl flex flex-col items-center justify-between w-full h-full overflow-hidden flex-grow">
         <div className="absolute inset-0 z-0">
           <img 
-            src="/developer_workspace.jpg" 
+            src={`${import.meta.env.BASE_URL}developer_workspace.jpg`} 
             alt="Workstation Backdrop" 
             className="w-full h-full object-cover opacity-15 filter grayscale contrast-125"
           />
@@ -98,7 +98,7 @@ function ProfileCard() {
         >
           <div className="w-full h-full rounded-full overflow-hidden border border-slate-950/50 bg-slate-900">
             <img 
-              src="/profile.jpg" 
+              src={`${import.meta.env.BASE_URL}profile.jpg`} 
               alt="Shaikh Ziya" 
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
             />
@@ -131,7 +131,7 @@ function ProfileCard() {
           style={{ transform: "translateZ(10px)" }}
         >
           <motion.a
-            href="/resume.pdf"
+            href={`${import.meta.env.BASE_URL}resume.pdf`}
             download
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}

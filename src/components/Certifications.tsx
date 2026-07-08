@@ -470,7 +470,7 @@ export default function Certifications() {
             <CertCard 
               key={idx} 
               cert={cert} 
-              onViewCertificate={() => setActivePdf({ url: cert.pdfUrl, name: cert.name })}
+              onViewCertificate={() => setActivePdf({ url: `${import.meta.env.BASE_URL.replace(/\/$/, '')}${cert.pdfUrl}`, name: cert.name })}
             />
           ))}
         </div>

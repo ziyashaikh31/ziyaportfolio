@@ -78,19 +78,20 @@ const itemVariants = {
 };
 
 function getImagePath(title: string) {
+  const base = import.meta.env.BASE_URL;
   switch (title) {
     case "Linux Automation Scripts":
-      return "/linux_automation_v2.jpg";
+      return `${base}linux_automation_v2.jpg`;
     case "AWS Cloud Infrastructure":
-      return "/aws_infrastructure_v2.jpg";
+      return `${base}aws_infrastructure_v2.jpg`;
     case "Docker Containerization":
-      return "/docker_containerization_v2.jpg";
+      return `${base}docker_containerization_v2.jpg`;
     case "Kubernetes Deployment":
-      return "/kubernetes_deployment_v2.jpg";
+      return `${base}kubernetes_deployment_v2.jpg`;
     case "CI/CD Pipeline":
-      return "/cicd_pipeline_v2.jpg";
+      return `${base}cicd_pipeline_v2.jpg`;
     case "Infrastructure Automation":
-      return "/infrastructure_automation_v2.jpg";
+      return `${base}infrastructure_automation_v2.jpg`;
     default:
       return "";
   }

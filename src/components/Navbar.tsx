@@ -24,7 +24,7 @@ function AnimeAvatar() {
       {/* Avatar Image container */}
       <div className="relative z-10 w-[38px] h-[38px] rounded-full overflow-hidden flex items-center justify-center border border-white/10">
         <img 
-          src="/anime_avatar.jpg" 
+          src={`${import.meta.env.BASE_URL}anime_avatar.jpg`} 
           alt="Shaikh Ziya Anime Avatar" 
           className="w-full h-full object-cover"
           draggable={false}

@@ -517,7 +517,7 @@ export default function Hero() {
 
                  <video 
                   ref={videoRef}
-                  src="/AI-video-new.mp4" 
+                  src={`${import.meta.env.BASE_URL}AI-video-new.mp4`} 
                   autoPlay 
                   playsInline 
                   controls={showControls}

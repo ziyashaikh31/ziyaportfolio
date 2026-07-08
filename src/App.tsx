@@ -117,7 +117,7 @@ export default function App() {
         </div>
 
         <motion.a
-          href="/resume.pdf"
+          href={`${import.meta.env.BASE_URL}resume.pdf`}
           download
           whileHover={{ scale: 1.08, boxShadow: "0 0 20px rgba(59,130,246,0.35)" }}
           whileTap={{ scale: 0.95 }}
