@@ -51,13 +51,15 @@ export default function App() {
   });
 
   // Render 404 page if path is invalid
+  const base = import.meta.env.BASE_URL;
   const cleanPath = currentPath.replace(/\/$/, "");
+  const cleanBase = base.replace(/\/$/, "");
+
   if (
-    cleanPath !== '' && 
-    cleanPath !== '/' && 
-    cleanPath !== '/index.html' && 
-    cleanPath !== '/ziyaportfolio' && 
-    cleanPath !== '/ziyaportfolio/index.html'
+    cleanPath !== cleanBase &&
+    cleanPath !== `${cleanBase}/index.html` &&
+    cleanPath !== '/' &&
+    cleanPath !== '/index.html'
   ) {
     return <NotFound />;
   }
