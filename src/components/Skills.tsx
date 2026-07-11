@@ -1,6 +1,6 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useMotionValue, useMotionTemplate } from 'framer-motion';
-import { Terminal, Cloud, Cpu, Layers, GitBranch, Play, Settings, Compass } from 'lucide-react';
+import { Terminal, Cloud, Cpu, Layers, GitBranch, Play, Settings, Compass, RotateCcw } from 'lucide-react';
 import AnimatedHeading from './AnimatedHeading';
 
 interface Skill {
@@ -36,10 +36,85 @@ function getStatusBadgeStyles(level: string) {
 
 function ProfileCard() {
   const cardRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const tiltX = useMotionValue(0);
   const tiltY = useMotionValue(0);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+
+  const [showPlayOverlay, setShowPlayOverlay] = useState(false);
+  const [videoEnded, setVideoEnded] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(true);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Default: unmuted, 100% volume
+    video.muted = false;
+    video.volume = 1.0;
+
+    const handleAutoplay = async () => {
+      try {
+        await video.play();
+        setShowPlayOverlay(false);
+      } catch (err) {
+        console.log("Autoplay unmuted blocked by browser policy, showing play overlay:", err);
+        setShowPlayOverlay(true);
+      }
+    };
+
+    const onCanPlay = () => {
+      setIsBuffering(false);
+      handleAutoplay();
+    };
+    const onWaiting = () => setIsBuffering(true);
+    const onPlaying = () => setIsBuffering(false);
+    const onEnded = () => setVideoEnded(true);
+
+    video.addEventListener('canplay', onCanPlay);
+    video.addEventListener('waiting', onWaiting);
+    video.addEventListener('playing', onPlaying);
+    video.addEventListener('ended', onEnded);
+
+    if (video.readyState >= 3) {
+      setIsBuffering(false);
+      handleAutoplay();
+    }
+
+    return () => {
+      video.removeEventListener('canplay', onCanPlay);
+      video.removeEventListener('waiting', onWaiting);
+      video.removeEventListener('playing', onPlaying);
+      video.removeEventListener('ended', onEnded);
+    };
+  }, []);
+
+  const handlePlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (video) {
+      video.play()
+        .then(() => {
+          setShowPlayOverlay(false);
+          setVideoEnded(false);
+        })
+        .catch(err => console.error("Play click failed:", err));
+    }
+  };
+
+  const handleReplayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = 0;
+      video.play()
+        .then(() => {
+          setVideoEnded(false);
+        })
+        .catch(err => console.error("Replay click failed:", err));
+    }
+  };
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     if (!cardRef.current) return;
@@ -74,7 +149,7 @@ function ProfileCard() {
     >
       <div className="absolute inset-[-50%] bg-[conic-gradient(from_0deg,#4f8cff,#8b5cf6,#4f8cff)] animate-[spin_10s_linear_infinite] opacity-15 group-hover:opacity-45 transition-opacity duration-300 pointer-events-none z-0"></div>
 
-      <div className="relative z-10 p-4 rounded-[22.5px] bg-slate-950/80 backdrop-blur-xl flex flex-col items-center justify-center w-full h-full overflow-hidden flex-grow">
+      <div className="relative z-10 p-4 rounded-[22.5px] bg-slate-950/80 backdrop-blur-xl flex flex-col items-center justify-between w-full h-full overflow-hidden flex-grow gap-4">
         {/* spotlight overlay */}
         <motion.div 
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10"
@@ -87,19 +162,65 @@ function ProfileCard() {
 
         {/* Embedded AI Introduction Video Container */}
         <div 
-          className="relative z-20 w-full h-full flex items-center justify-center overflow-hidden rounded-[20px] border border-white/10 bg-slate-900/40 shadow-inner group/video"
+          className="relative z-20 w-full flex-grow flex items-center justify-center overflow-hidden rounded-[20px] border border-white/10 bg-slate-900/40 shadow-inner group/video min-h-[220px]"
           style={{ transform: "translateZ(20px)" }}
         >
+          {/* Loading spinner */}
+          {isBuffering && (
+            <div className="absolute inset-0 z-35 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-blue-500 border-r-transparent border-slate-800"></div>
+            </div>
+          )}
+
           <video
+            ref={videoRef}
             src={`${import.meta.env.BASE_URL}skills-video.mp4`}
-            autoPlay
-            muted
-            loop
             controls
             playsInline
             className="w-full h-full object-contain rounded-[20px] bg-slate-950/45 transition-transform duration-500 group-hover/video:scale-[1.02]"
           />
+
+          {/* Prominent Play Overlay Button */}
+          {showPlayOverlay && !isBuffering && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm"
+            >
+              <motion.button
+                whileHover={{ scale: 1.1, boxShadow: "0 0 25px rgba(59,130,246,0.5)" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handlePlayClick}
+                className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-650 text-white shadow-xl cursor-pointer hover:opacity-95 transition-all"
+              >
+                <Play className="h-6 w-6 fill-white ml-1" />
+              </motion.button>
+              <span className="mt-3 text-xs font-semibold text-slate-350 tracking-wider uppercase font-space">
+                Play AI Intro
+              </span>
+            </motion.div>
+          )}
         </div>
+
+        {/* Replay Video Button (display centered below the video container) */}
+        {videoEnded && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative z-30 flex items-center justify-center w-full pb-1"
+            style={{ transform: "translateZ(10px)" }}
+          >
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(79,140,255,0.3)" }}
+              whileTap={{ scale: 0.97 }}
+              onClick={handleReplayClick}
+              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-2.5 text-xs font-bold text-white shadow-md cursor-pointer transition-all font-sans"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              Replay Video
+            </motion.button>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
