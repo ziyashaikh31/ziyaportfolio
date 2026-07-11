@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion, useMotionValue, useMotionTemplate } from 'framer-motion';
-import { Terminal, Cloud, Cpu, Layers, GitBranch, Play, Settings, Compass, Download, GraduationCap } from 'lucide-react';
+import { Terminal, Cloud, Cpu, Layers, GitBranch, Play, Settings, Compass } from 'lucide-react';
 import AnimatedHeading from './AnimatedHeading';
 
 interface Skill {
@@ -74,72 +74,31 @@ function ProfileCard() {
     >
       <div className="absolute inset-[-50%] bg-[conic-gradient(from_0deg,#4f8cff,#8b5cf6,#4f8cff)] animate-[spin_10s_linear_infinite] opacity-15 group-hover:opacity-45 transition-opacity duration-300 pointer-events-none z-0"></div>
 
-      <div className="relative z-10 p-6 rounded-[22.5px] bg-slate-950/80 backdrop-blur-xl flex flex-col items-center justify-between w-full h-full overflow-hidden flex-grow">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={`${import.meta.env.BASE_URL}developer_workspace.jpg`} 
-            alt="Workstation Backdrop" 
-            className="w-full h-full object-cover opacity-15 filter grayscale contrast-125"
-          />
-          <div className="absolute inset-0 bg-slate-950/75 backdrop-blur-[2px]"></div>
-        </div>
-
+      <div className="relative z-10 p-4 rounded-[22.5px] bg-slate-950/80 backdrop-blur-xl flex flex-col items-center justify-center w-full h-full overflow-hidden flex-grow">
+        {/* spotlight overlay */}
         <motion.div 
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10"
           style={{ background: spotlightTemplate }}
         />
 
+        {/* Ambient Glowing Orbs */}
         <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-28 h-28 bg-blue-500/5 rounded-full blur-[45px] pointer-events-none z-0"></div>
         <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-28 h-28 bg-purple-500/5 rounded-full blur-[45px] pointer-events-none z-0"></div>
 
+        {/* Embedded AI Introduction Video Container */}
         <div 
-          className="relative mt-4 z-20 w-28 h-28 rounded-full p-[2.5px] bg-gradient-to-tr from-blue-500/80 via-purple-500/80 to-cyan-400/80 shadow-[0_0_12px_rgba(79,140,255,0.24)] group-hover:scale-105 transition-transform duration-500"
-          style={{ transform: "translateZ(30px)" }}
-        >
-          <div className="w-full h-full rounded-full overflow-hidden border border-slate-950/50 bg-slate-900">
-            <img 
-              src={`${import.meta.env.BASE_URL}profile.jpg`} 
-              alt="Shaikh Ziya" 
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-            />
-          </div>
-        </div>
-
-        <div 
-          className="space-y-4.5 mt-8 text-center z-20"
+          className="relative z-20 w-full h-full flex items-center justify-center overflow-hidden rounded-[20px] border border-white/10 bg-slate-900/40 shadow-inner group/video"
           style={{ transform: "translateZ(20px)" }}
         >
-          <div className="space-y-1.5">
-            <h4 className="text-xl font-black font-space text-white tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-              Shaikh Ziya
-            </h4>
-            <p className="text-blue-400 font-bold font-space text-[11px] tracking-wider uppercase drop-shadow-[0_1px_5px_rgba(0,0,0,0.5)]">
-              Aspiring DevOps Engineer
-            </p>
-          </div>
-          
-          <div className="w-10 h-[1.5px] bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full opacity-50"></div>
-          
-          <p className="text-slate-350 text-[10px] font-semibold font-mono tracking-tight bg-slate-900/60 border border-white/5 px-2.5 py-1 rounded-full backdrop-blur-sm inline-flex items-center gap-1.5 select-none">
-            <GraduationCap className="h-3.5 w-3.5 text-purple-450" />
-            MCA | JSPM University
-          </p>
-        </div>
-
-        <div 
-          className="w-full mt-auto mb-1 z-20"
-          style={{ transform: "translateZ(10px)" }}
-        >
-          <motion.a
-            href={`${import.meta.env.BASE_URL}resume.pdf`}
-            download
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 py-2.5 text-xs font-bold text-white shadow-[0_0_15px_rgba(79,140,255,0.2)] hover:shadow-[0_0_25px_rgba(79,140,255,0.35)] transition-all cursor-pointer font-sans"
-          >
-            <Download className="h-4 w-4" />
-            Download Resume
-          </motion.a>
+          <video
+            src={`${import.meta.env.BASE_URL}skills-video.mp4`}
+            autoPlay
+            muted
+            loop
+            controls
+            playsInline
+            className="w-full h-full object-contain rounded-[20px] bg-slate-950/45 transition-transform duration-500 group-hover/video:scale-[1.02]"
+          />
         </div>
       </div>
     </motion.div>
