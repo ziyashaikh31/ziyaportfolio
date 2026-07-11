@@ -46,8 +46,8 @@ function ProfileCard() {
   const [videoEnded, setVideoEnded] = useState(false);
   const [isBuffering, setIsBuffering] = useState(true);
 
-  // InView observer: triggers only once
-  const isInView = useInView(videoRef, { once: true, amount: 0.2 });
+  // InView observer: triggers only once, at least 60% visible
+  const isInView = useInView(videoRef, { once: true, amount: 0.6 });
   const [hasTriggeredPlay, setHasTriggeredPlay] = useState(false);
 
   useEffect(() => {
@@ -60,6 +60,10 @@ function ProfileCard() {
 
     const handleAutoplay = async () => {
       try {
+        const otherVideo = document.getElementById('hero-ai-video') as HTMLVideoElement;
+        if (otherVideo && !otherVideo.paused) {
+          otherVideo.pause();
+        }
         await video.play();
         setShowPlayOverlay(false);
       } catch (err) {
@@ -103,6 +107,10 @@ function ProfileCard() {
     e.stopPropagation();
     const video = videoRef.current;
     if (video) {
+      const otherVideo = document.getElementById('hero-ai-video') as HTMLVideoElement;
+      if (otherVideo && !otherVideo.paused) {
+        otherVideo.pause();
+      }
       video.play()
         .then(() => {
           setShowPlayOverlay(false);
@@ -116,6 +124,10 @@ function ProfileCard() {
     e.stopPropagation();
     const video = videoRef.current;
     if (video) {
+      const otherVideo = document.getElementById('hero-ai-video') as HTMLVideoElement;
+      if (otherVideo && !otherVideo.paused) {
+        otherVideo.pause();
+      }
       video.currentTime = 0;
       video.play()
         .then(() => {
@@ -182,6 +194,7 @@ function ProfileCard() {
           )}
 
           <video
+            id="skills-ai-video"
             ref={videoRef}
             src={`${import.meta.env.BASE_URL}skills-video.mp4`}
             preload="metadata"

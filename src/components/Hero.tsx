@@ -91,6 +91,10 @@ export default function Hero() {
 
     const handleAutoplay = async () => {
       try {
+        const otherVideo = document.getElementById('skills-ai-video') as HTMLVideoElement;
+        if (otherVideo && !otherVideo.paused) {
+          otherVideo.pause();
+        }
         video.muted = false;
         setIsMuted(false);
         await video.play();
@@ -136,6 +140,10 @@ export default function Hero() {
     e.stopPropagation();
     const video = videoRef.current;
     if (video) {
+      const otherVideo = document.getElementById('skills-ai-video') as HTMLVideoElement;
+      if (otherVideo && !otherVideo.paused) {
+        otherVideo.pause();
+      }
       video.currentTime = 0;
       video.muted = false;
       video.volume = 1.0;
@@ -516,6 +524,7 @@ export default function Hero() {
                 )}
 
                  <video 
+                  id="hero-ai-video"
                   ref={videoRef}
                   src={`${import.meta.env.BASE_URL}AI-video-new.mp4`} 
                   preload="metadata"
