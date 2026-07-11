@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { motion, useMotionValue, useMotionTemplate } from 'framer-motion';
+import { motion, useMotionValue, useMotionTemplate, useInView } from 'framer-motion';
 import { Terminal, Cloud, Cpu, Layers, GitBranch, Play, Settings, Compass, RotateCcw } from 'lucide-react';
 import AnimatedHeading from './AnimatedHeading';
 
@@ -46,11 +46,15 @@ function ProfileCard() {
   const [videoEnded, setVideoEnded] = useState(false);
   const [isBuffering, setIsBuffering] = useState(true);
 
+  // InView observer: triggers only once
+  const isInView = useInView(videoRef, { once: true, amount: 0.2 });
+  const [hasTriggeredPlay, setHasTriggeredPlay] = useState(false);
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Default: unmuted, 100% volume
+    // Set default audio levels
     video.muted = false;
     video.volume = 1.0;
 
@@ -59,36 +63,41 @@ function ProfileCard() {
         await video.play();
         setShowPlayOverlay(false);
       } catch (err) {
-        console.log("Autoplay unmuted blocked by browser policy, showing play overlay:", err);
+        console.log("Autoplay unmuted blocked by browser safety, showing play button overlay:", err);
         setShowPlayOverlay(true);
       }
     };
 
-    const onCanPlay = () => {
-      setIsBuffering(false);
-      handleAutoplay();
-    };
-    const onWaiting = () => setIsBuffering(true);
-    const onPlaying = () => setIsBuffering(false);
-    const onEnded = () => setVideoEnded(true);
+    if (isInView && !hasTriggeredPlay) {
+      setHasTriggeredPlay(true);
+      video.preload = "auto";
+      
+      const onCanPlay = () => {
+        setIsBuffering(false);
+        handleAutoplay();
+      };
+      const onWaiting = () => setIsBuffering(true);
+      const onPlaying = () => setIsBuffering(false);
+      const onEnded = () => setVideoEnded(true);
 
-    video.addEventListener('canplay', onCanPlay);
-    video.addEventListener('waiting', onWaiting);
-    video.addEventListener('playing', onPlaying);
-    video.addEventListener('ended', onEnded);
+      video.addEventListener('canplay', onCanPlay);
+      video.addEventListener('waiting', onWaiting);
+      video.addEventListener('playing', onPlaying);
+      video.addEventListener('ended', onEnded);
 
-    if (video.readyState >= 3) {
-      setIsBuffering(false);
-      handleAutoplay();
+      if (video.readyState >= 3) {
+        setIsBuffering(false);
+        handleAutoplay();
+      }
+
+      return () => {
+        video.removeEventListener('canplay', onCanPlay);
+        video.removeEventListener('waiting', onWaiting);
+        video.removeEventListener('playing', onPlaying);
+        video.removeEventListener('ended', onEnded);
+      };
     }
-
-    return () => {
-      video.removeEventListener('canplay', onCanPlay);
-      video.removeEventListener('waiting', onWaiting);
-      video.removeEventListener('playing', onPlaying);
-      video.removeEventListener('ended', onEnded);
-    };
-  }, []);
+  }, [isInView, hasTriggeredPlay]);
 
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -175,6 +184,7 @@ function ProfileCard() {
           <video
             ref={videoRef}
             src={`${import.meta.env.BASE_URL}skills-video.mp4`}
+            preload="metadata"
             controls
             playsInline
             className="w-full h-full object-contain rounded-[20px] bg-slate-950/45 transition-transform duration-500 group-hover/video:scale-[1.02]"
@@ -202,12 +212,12 @@ function ProfileCard() {
           )}
         </div>
 
-        {/* Replay Video Button (display centered below the video container) */}
+        {/* Replay Video Button (display centered below the video container with ~12px spacing) */}
         {videoEnded && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative z-30 flex items-center justify-center w-full pb-1"
+            className="relative z-30 flex items-center justify-center w-full pb-1 mt-[-4px]"
             style={{ transform: "translateZ(10px)" }}
           >
             <motion.button
