@@ -1,85 +1,10 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Target, Cpu, Cloud, Settings, GitBranch, Play, Compass, Layers } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Target, Shield, Compass, GraduationCap, Award, Briefcase, MapPin, Activity } from 'lucide-react';
 import AnimatedHeading from './AnimatedHeading';
-
-interface Node {
-  id: string;
-  label: string;
-  x: number;
-  y: number;
-  icon: React.ReactNode;
-  color: string;
-  category: string;
-  description: string;
-}
-
-const nodes: Node[] = [
-  // Development & Code Integration (Left Side)
-  { id: "linux", label: "Linux", x: 280, y: 160, icon: <Terminal className="h-4.5 w-4.5 text-blue-400" />, color: "#3b82f6", category: "OS Core", description: "The operating system foundation for hosting cloud workloads, containers, and pipelines." },
-  { id: "git", label: "Git", x: 300, y: 300, icon: <GitBranch className="h-4.5 w-4.5 text-red-450" />, color: "#ef4444", category: "Version Control", description: "Distributed Version Control System managing code commits, branching, and merges." },
-  { id: "shell", label: "Shell Scripting", x: 280, y: 440, icon: <Terminal className="h-4.5 w-4.5 text-yellow-400" />, color: "#eab308", category: "Automation", description: "Bash scripting automating daily administration tasks and local job scheduling." },
-  { id: "github", label: "GitHub", x: 120, y: 160, icon: <Cloud className="h-4.5 w-4.5 text-rose-450" />, color: "#fb7185", category: "Code Collaboration", description: "Hosting repository platform enabling code reviews, issues, and Git workflows." },
-  { id: "jenkins", label: "Jenkins", x: 120, y: 300, icon: <Play className="h-4.5 w-4.5 text-emerald-400" />, color: "#34d399", category: "Continuous Integration", description: "Build server automating application compilation, unit testing, and script runs." },
-  { id: "cicd", label: "CI/CD", x: 120, y: 440, icon: <Cpu className="h-4.5 w-4.5 text-purple-400" />, color: "#c084fc", category: "Automation Pipeline", description: "Pipelining standards integrating builds and deployments automatically for delivery." },
-
-  // Cloud & Deployment Operations (Right Side)
-  { id: "aws", label: "AWS", x: 720, y: 160, icon: <Cloud className="h-4.5 w-4.5 text-orange-400" />, color: "#fb923c", category: "Cloud Platform", description: "Amazon Web Services infrastructure hosting servers, databases, and private networking." },
-  { id: "docker", label: "Docker", x: 700, y: 300, icon: <Layers className="h-4.5 w-4.5 text-cyan-405" />, color: "#22d3ee", category: "Containerization", description: "Standard container runtime packaging apps with dependencies for portability." },
-  { id: "ansible", label: "Ansible", x: 720, y: 440, icon: <Settings className="h-4.5 w-4.5 text-pink-400" />, color: "#f472b6", category: "Configuration Mgmt", description: "Agentless automation orchestrating server setups and configuration standards." },
-  { id: "terraform", label: "Terraform", x: 880, y: 160, icon: <Compass className="h-4.5 w-4.5 text-violet-400" />, color: "#a78bfa", category: "Infrastructure as Code", description: "IaC platform declaring, versioning, and building immutable cloud architectures." },
-  { id: "kubernetes", label: "Kubernetes", x: 880, y: 300, icon: <Settings className="h-4.5 w-4.5 text-indigo-400" />, color: "#818cf8", category: "Orchestration", description: "Container orchestration automating clusters, load balancing, and self-healing systems." },
-  { id: "monitoring", label: "Monitoring", x: 880, y: 440, icon: <Target className="h-4.5 w-4.5 text-teal-400" />, color: "#2dd4bf", category: "Observability", description: "Alerting systems monitoring CPU loads, network payloads, and error outputs." }
-];
-
-interface Edge {
-  from: string;
-  to: string;
-  dashed?: boolean;
-}
-
-const edges: Edge[] = [
-  // Connections to core Devops hub
-  { from: "linux", to: "core" },
-  { from: "git", to: "core" },
-  { from: "shell", to: "core" },
-  { from: "github", to: "core" },
-  { from: "jenkins", to: "core" },
-  { from: "cicd", to: "core" },
-  { from: "aws", to: "core" },
-  { from: "docker", to: "core" },
-  { from: "ansible", to: "core" },
-  { from: "terraform", to: "core" },
-  { from: "kubernetes", to: "core" },
-  { from: "monitoring", to: "core" },
-
-  // Connected pipelines
-  { from: "github", to: "git", dashed: true },
-  { from: "git", to: "jenkins", dashed: true },
-  { from: "jenkins", to: "cicd" },
-  { from: "shell", to: "linux" },
-  { from: "docker", to: "kubernetes" },
-  { from: "terraform", to: "aws" },
-  { from: "ansible", to: "aws", dashed: true },
-  { from: "kubernetes", to: "monitoring" }
-];
-
-const backgroundParticles = [
-  { cx: 80, cy: 100, r: 1.5, color: "#3b82f6" },
-  { cx: 220, cy: 120, r: 2, color: "#8b5cf6" },
-  { cx: 420, cy: 90, r: 1, color: "#06b6d4" },
-  { cx: 780, cy: 110, r: 2.5, color: "#10b981" },
-  { cx: 920, cy: 200, r: 1, color: "#f97316" },
-  { cx: 160, cy: 490, r: 2, color: "#ec4899" },
-  { cx: 340, cy: 510, r: 1.5, color: "#3b82f6" },
-  { cx: 740, cy: 490, r: 2, color: "#8b5cf6" },
-  { cx: 900, cy: 510, r: 1, color: "#06b6d4" },
-  { cx: 580, cy: 70, r: 2, color: "#10b981" }
-];
 
 export default function About() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
 
   const handleSectionMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -89,21 +14,22 @@ export default function About() {
     });
   };
 
-  const getNodeCoordinates = (nodeId: string) => {
-    if (nodeId === "core") return { x: 500, y: 300 };
-    const found = nodes.find(n => n.id === nodeId);
-    return found ? { x: found.x, y: found.y } : { x: 0, y: 0 };
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12
+      }
+    }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 30 },
+  const panelVariants = {
+    hidden: { opacity: 0, y: 25 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1] as any
-      }
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as any }
     }
   };
 
@@ -113,32 +39,36 @@ export default function About() {
       onMouseMove={handleSectionMouseMove}
       className="relative px-6 py-28 md:px-8 bg-slate-950/20 overflow-hidden"
     >
-      {/* Background Grid Overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 pointer-events-none z-0 animate-grid-shift"></div>
+      {/* Background Cyber Grid Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1.2px,transparent_1.2px),linear-gradient(to_bottom,#0f172a_1.2px,transparent_1.2px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-25 pointer-events-none z-0 animate-grid-shift"></div>
+
+      {/* Futuristic Telemetry Lines */}
+      <div className="absolute top-0 left-10 w-[1px] h-full bg-gradient-to-b from-blue-500/10 via-purple-500/5 to-transparent pointer-events-none z-0"></div>
+      <div className="absolute top-0 right-10 w-[1px] h-full bg-gradient-to-b from-cyan-500/10 via-purple-500/5 to-transparent pointer-events-none z-0"></div>
 
       {/* Shifting Grid Keyframes */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes grid-move {
           0% { background-position: 0 0; }
-          100% { background-position: 4rem 4rem; }
+          100% { background-position: 3.5rem 3.5rem; }
         }
         .animate-grid-shift {
-          animation: grid-move 30s linear infinite;
+          animation: grid-move 35s linear infinite;
         }
-        @keyframes dash {
-          to {
-            stroke-dashoffset: -40;
-          }
+        @keyframes pulse-glowing {
+          0%, 100% { filter: drop-shadow(0 0 4px rgba(6, 182, 212, 0.3)); }
+          50% { filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.8)); }
         }
-        .animate-dash-flow {
-          animation: dash 3s linear infinite;
+        .animate-core-pulse {
+          animation: pulse-glowing 4s ease-in-out infinite;
         }
       `}} />
 
+      {/* Mouse Track Glow */}
       <div 
         className="absolute inset-0 pointer-events-none z-0 opacity-40 transition-opacity duration-300"
         style={{
-          background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, rgba(59, 130, 246, 0.04), rgba(139, 92, 246, 0.03), transparent 70%)`
+          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(59, 130, 246, 0.04), rgba(6, 182, 212, 0.03), transparent 70%)`
         }}
       />
 
@@ -149,229 +79,313 @@ export default function About() {
         variants={containerVariants}
         className="mx-auto max-w-7xl relative z-10"
       >
-        {/* Title & Introduction */}
-        <div className="max-w-3xl mb-12 select-none">
-          <AnimatedHeading text="DevOps Journey & Architecture" />
-          <div className="mt-6 space-y-4 text-slate-300 text-base leading-relaxed font-sans">
-            <p className="font-semibold text-white text-lg">
-              Hi, I'm Shaikh Ziya, an MCA student specializing in Cloud Computing at JSPM University, Pune.
-            </p>
-            <p>
-              I am passionate about DevOps, Cloud Computing, Automation, and modern cloud technologies.
-              Below is the interactive mapping of my skillset, demonstrating how code hosting, packaging, pipelines, infrastructure, configuration, and observability stacks integrate to form scalable architectures.
-            </p>
+        {/* Section Header */}
+        <div className="max-w-3xl mb-16 select-none">
+          <span className="text-[10px] font-mono font-bold tracking-[0.25em] text-cyan-400 uppercase">System Identity // Integration</span>
+          <div className="mt-2">
+            <AnimatedHeading text="Holographic Profile" />
           </div>
         </div>
 
-        {/* DevOps Architecture Interactive Panel */}
-        <div className="w-full rounded-[24px] border border-white/10 bg-slate-950/40 p-4 sm:p-8 backdrop-blur-md shadow-2xl relative overflow-hidden min-h-[500px] flex items-center justify-center">
+        {/* 3-Column Futuristic Command Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
           
-          <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent pb-4">
-            <div className="relative min-w-[960px] max-w-[1000px] mx-auto aspect-[10/6] w-full">
-              
+          {/* LEFT COLUMN (lg:col-span-4): Floating Info Panels */}
+          <div className="lg:col-span-4 flex flex-col gap-6 order-2 lg:order-1 justify-center">
+            
+            {/* Panel 1: WHO I AM */}
+            <motion.div
+              variants={panelVariants}
+              whileHover={{ y: -5, borderColor: "rgba(59, 130, 246, 0.3)" }}
+              className="relative p-5 rounded-2xl bg-slate-950/45 border border-white/10 backdrop-blur-md transition-all duration-300 shadow-xl overflow-hidden group"
+            >
+              {/* Glowing Corner Accents */}
+              <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-blue-500/60"></div>
+              <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-blue-500/60"></div>
+
+              <div className="flex items-center gap-3 mb-3.5 select-none">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                  <Compass className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-[11px] font-mono font-bold tracking-widest text-blue-400 uppercase">
+                  01 // Who I Am
+                </h3>
+              </div>
+              <p className="text-slate-350 text-[13px] leading-relaxed font-sans font-medium">
+                A passionate MCA student and aspiring DevOps Engineer focused on building scalable cloud infrastructure, configuration standards, and continuous delivery workflows.
+              </p>
+            </motion.div>
+
+            {/* Panel 2: MISSION */}
+            <motion.div
+              variants={panelVariants}
+              whileHover={{ y: -5, borderColor: "rgba(139, 92, 246, 0.3)" }}
+              className="relative p-5 rounded-2xl bg-slate-950/45 border border-white/10 backdrop-blur-md transition-all duration-300 shadow-xl overflow-hidden group"
+            >
+              {/* Glowing Corner Accents */}
+              <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-purple-500/60"></div>
+              <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-purple-500/60"></div>
+
+              <div className="flex items-center gap-3 mb-3.5 select-none">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                  <Target className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-[11px] font-mono font-bold tracking-widest text-purple-400 uppercase">
+                  02 // Mission
+                </h3>
+              </div>
+              <p className="text-slate-350 text-[13px] leading-relaxed font-sans font-medium">
+                Continuously learning cloud virtualization tools, scripting processes, and code deployments while implementing secure configurations across real-world server architectures.
+              </p>
+            </motion.div>
+
+            {/* Panel 3: VISION */}
+            <motion.div
+              variants={panelVariants}
+              whileHover={{ y: -5, borderColor: "rgba(6, 182, 212, 0.3)" }}
+              className="relative p-5 rounded-2xl bg-slate-950/45 border border-white/10 backdrop-blur-md transition-all duration-300 shadow-xl overflow-hidden group"
+            >
+              {/* Glowing Corner Accents */}
+              <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-cyan-500/60"></div>
+              <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-cyan-500/60"></div>
+
+              <div className="flex items-center gap-3 mb-3.5 select-none">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  <Shield className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-[11px] font-mono font-bold tracking-widest text-cyan-400 uppercase">
+                  03 // Vision
+                </h3>
+              </div>
+              <p className="text-slate-350 text-[13px] leading-relaxed font-sans font-medium">
+                To design secure, highly automated, and self-healing cloud delivery pipelines that solve complex infrastructure problems and drive rapid software releases.
+              </p>
+            </motion.div>
+
+          </div>
+
+          {/* CENTER COLUMN (lg:col-span-4): Glowing Hologram Globe */}
+          <div className="lg:col-span-4 flex flex-col justify-center items-center order-1 lg:order-2 py-8 min-h-[360px] relative select-none">
+            
+            {/* Hologram Backing Orbs */}
+            <div className="absolute w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+            <div className="absolute w-48 h-48 bg-purple-500/5 rounded-full blur-[60px] top-1/3 left-1/3 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+
+            {/* Rotating Globe SVG Grid */}
+            <div className="relative w-full max-w-[340px] aspect-square flex items-center justify-center">
               <svg 
-                viewBox="0 0 1000 600" 
+                viewBox="0 0 400 400" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-full select-none"
+                className="w-full h-full select-none overflow-visible"
               >
                 <defs>
-                  {/* Central Node Gradient */}
-                  <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.85" />
-                    <stop offset="60%" stopColor="#8b5cf6" stopOpacity="0.5" />
-                    <stop offset="100%" stopColor="#06b6d4" stopOpacity="0" />
+                  <radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="#0891b2" stopOpacity="0.4" />
+                    <stop offset="60%" stopColor="#3b82f6" stopOpacity="0.15" />
+                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
                   </radialGradient>
                   
-                  {/* Connection Line Gradient */}
-                  <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.4" />
-                    <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.4" />
-                  </linearGradient>
+                  <mask id="sphereClip">
+                    <circle cx="200" cy="200" r="115" fill="#ffffff" />
+                  </mask>
 
-                  {/* Glow filter */}
-                  <filter id="nodeGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="8" result="blur" />
+                  <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="6" result="blur" />
                     <feComposite in="SourceGraphic" in2="blur" operator="over" />
                   </filter>
                 </defs>
 
-                {/* Background Telemetry Particles */}
-                {backgroundParticles.map((pt, i) => (
-                  <motion.circle
-                    key={i}
-                    cx={pt.cx}
-                    cy={pt.cy}
-                    r={pt.r}
-                    fill={pt.color}
-                    animate={{
-                      opacity: [0.15, 0.7, 0.15],
-                      y: [0, -12, 0]
-                    }}
-                    transition={{
-                      duration: 3 + (i % 3) * 1.5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: i * 0.25
-                    }}
-                  />
-                ))}
-
-                {/* Animated Connection Edges */}
-                {edges.map((edge, idx) => {
-                  const fromCoord = getNodeCoordinates(edge.from);
-                  const toCoord = getNodeCoordinates(edge.to);
-                  const isHighlighted = hoveredNode && (hoveredNode.id === edge.from || hoveredNode.id === edge.to);
-
-                  return (
-                    <g key={idx}>
-                      {/* Underlying Glow Path */}
-                      <path
-                        d={`M ${fromCoord.x} ${fromCoord.y} L ${toCoord.x} ${toCoord.y}`}
-                        stroke={isHighlighted ? hoveredNode.color : "url(#lineGrad)"}
-                        strokeWidth={isHighlighted ? 2.5 : 1.5}
-                        strokeOpacity={isHighlighted ? 0.9 : 0.25}
-                        className={edge.dashed ? "stroke-dasharray-5" : ""}
-                        style={{ transition: "stroke 0.4s, stroke-width 0.4s, stroke-opacity 0.4s" }}
-                      />
-                      {/* Flowing Pulse Packet */}
-                      <path
-                        d={`M ${fromCoord.x} ${fromCoord.y} L ${toCoord.x} ${toCoord.y}`}
-                        stroke={isHighlighted ? hoveredNode.color : "#60a5fa"}
-                        strokeWidth={isHighlighted ? 3 : 2}
-                        strokeOpacity={isHighlighted ? 0.95 : 0.4}
-                        strokeDasharray="10 60"
-                        className="animate-dash-flow"
-                      />
-                    </g>
-                  );
-                })}
-
-                {/* Core DEVOPS Central Pulse Rings */}
-                <motion.circle
-                  cx="500"
-                  cy="300"
-                  r="70"
-                  fill="none"
+                {/* Concentric Gyroscope Rings */}
+                <motion.ellipse
+                  cx="200"
+                  cy="200"
+                  rx="155"
+                  ry="50"
                   stroke="#3b82f6"
-                  strokeWidth="1.5"
-                  filter="url(#nodeGlow)"
-                  initial={{ opacity: 0.7, scale: 0.8 }}
-                  animate={{ opacity: 0, scale: 1.35 }}
-                  transition={{ duration: 3.5, repeat: Infinity, ease: "easeOut" }}
+                  strokeWidth="0.8"
+                  opacity="0.3"
+                  style={{ transform: "rotate(-20deg)", transformOrigin: "200px 200px" }}
+                  animate={{ rotate: [360, 0] }}
+                  transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
                 />
-                <motion.circle
-                  cx="500"
-                  cy="300"
-                  r="70"
-                  fill="none"
+                <motion.ellipse
+                  cx="200"
+                  cy="200"
+                  rx="170"
+                  ry="60"
                   stroke="#8b5cf6"
-                  strokeWidth="1.5"
-                  filter="url(#nodeGlow)"
-                  initial={{ opacity: 0.7, scale: 0.8 }}
-                  animate={{ opacity: 0, scale: 1.35 }}
-                  transition={{ duration: 3.5, repeat: Infinity, ease: "easeOut", delay: 1.2 }}
+                  strokeWidth="0.6"
+                  opacity="0.25"
+                  style={{ transform: "rotate(30deg)", transformOrigin: "200px 200px" }}
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
                 />
 
-                {/* Central Hub Core */}
-                <g className="cursor-default select-none">
-                  <circle
-                    cx="500"
-                    cy="300"
-                    r="48"
-                    fill="#030712"
-                    stroke="url(#coreGrad)"
-                    strokeWidth="3"
-                    filter="url(#nodeGlow)"
-                  />
-                  <text
-                    x="500"
-                    y="304"
-                    textAnchor="middle"
-                    fill="#ffffff"
-                    className="font-space font-black text-xs tracking-[0.25em] fill-white"
-                  >
-                    DEVOPS
-                  </text>
+                {/* Orb core backing */}
+                <circle cx="200" cy="200" r="115" fill="url(#globeGlow)" />
+
+                {/* Latitude Lines */}
+                <g mask="url(#sphereClip)">
+                  <path d="M 50 120 Q 200 145 350 120" stroke="#06b6d4" strokeWidth="0.6" opacity="0.25" />
+                  <path d="M 50 160 Q 200 185 350 160" stroke="#06b6d4" strokeWidth="0.65" opacity="0.35" />
+                  <path d="M 50 200 L 350 200" stroke="#06b6d4" strokeWidth="0.75" opacity="0.45" />
+                  <path d="M 50 240 Q 200 215 350 240" stroke="#06b6d4" strokeWidth="0.65" opacity="0.35" />
+                  <path d="M 50 280 Q 200 255 350 280" stroke="#06b6d4" strokeWidth="0.6" opacity="0.25" />
                 </g>
 
-                {/* Embedded HTML ForeignObject Capsules for Interactive Hovering Nodes */}
-                {nodes.map((node) => {
-                  const isCurrentHovered = hoveredNode && hoveredNode.id === node.id;
-                  
-                  return (
-                    <foreignObject
-                      key={node.id}
-                      x={node.x - 70}
-                      y={node.y - 22}
-                      width="140"
-                      height="44"
-                      className="overflow-visible"
-                    >
-                      <motion.div
-                        onMouseEnter={() => setHoveredNode(node)}
-                        onMouseLeave={() => setHoveredNode(null)}
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 18 }}
-                        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-slate-950/90 border transition-all duration-300 shadow-xl cursor-pointer select-none ${
-                          isCurrentHovered 
-                            ? "border-opacity-100 shadow-[0_0_15px_rgba(59,130,246,0.3)] text-white" 
-                            : "border-white/10 text-slate-350 hover:text-white"
-                        }`}
-                        style={{
-                          borderColor: isCurrentHovered ? node.color : "rgba(255, 255, 255, 0.1)"
-                        }}
-                      >
-                        <div className="flex h-5 w-5 items-center justify-center shrink-0">
-                          {node.icon}
-                        </div>
-                        <span className="text-[11px] font-bold font-space tracking-wide truncate">
-                          {node.label}
-                        </span>
-                      </motion.div>
-                    </foreignObject>
-                  );
-                })}
+                {/* Longitude Ellipses Simulating Rotation */}
+                <g mask="url(#sphereClip)">
+                  <motion.ellipse
+                    cx="200"
+                    cy="200"
+                    rx="115"
+                    ry="115"
+                    stroke="#0891b2"
+                    strokeWidth="0.65"
+                    opacity="0.3"
+                    fill="none"
+                    animate={{ rx: [115, 0, 115] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                  />
+                  <motion.ellipse
+                    cx="200"
+                    cy="200"
+                    rx="75"
+                    ry="115"
+                    stroke="#0891b2"
+                    strokeWidth="0.65"
+                    opacity="0.35"
+                    fill="none"
+                    animate={{ rx: [75, 115, 0, 75] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                  />
+                  <motion.ellipse
+                    cx="200"
+                    cy="200"
+                    rx="35"
+                    ry="115"
+                    stroke="#0891b2"
+                    strokeWidth="0.65"
+                    opacity="0.4"
+                    fill="none"
+                    animate={{ rx: [35, 75, 115, 0, 35] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                  />
+                </g>
+
+                {/* Glowing Outer Ring border */}
+                <circle cx="200" cy="200" r="115" stroke="url(#globeGlow)" strokeWidth="1.5" opacity="0.75" />
+
+                {/* Rotating Orbiting Satellites */}
+                <motion.g
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+                  style={{ transformOrigin: "200px 200px" }}
+                >
+                  <circle cx="200" cy="45" r="3.5" fill="#06b6d4" filter="url(#glowFilter)" className="animate-core-pulse" />
+                  <circle cx="200" cy="45" r="7" stroke="#06b6d4" strokeWidth="0.5" opacity="0.4" className="animate-ping" />
+                </motion.g>
+
+                <motion.g
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+                  style={{ transformOrigin: "200px 200px" }}
+                >
+                  <circle cx="200" cy="355" r="3" fill="#8b5cf6" filter="url(#glowFilter)" />
+                </motion.g>
               </svg>
 
-              {/* Glowing Interactive Tooltip Card Overlay (Responsive Coordinate Mapping) */}
-              <AnimatePresence>
-                {hoveredNode && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 5, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute z-50 p-4 w-72 rounded-xl bg-slate-950/95 border shadow-[0_0_20px_rgba(59,130,246,0.15)] text-slate-200 pointer-events-none backdrop-blur-md"
-                    style={{
-                      left: `${hoveredNode.x / 10}%`,
-                      top: `${hoveredNode.y / 6}%`,
-                      transform: 'translate(-50%, -125%)',
-                      borderColor: `${hoveredNode.color}44`
-                    }}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <span 
-                        className="text-[9px] uppercase font-bold px-2 py-0.5 rounded border"
-                        style={{
-                          backgroundColor: `${hoveredNode.color}15`,
-                          color: hoveredNode.color,
-                          borderColor: `${hoveredNode.color}25`
-                        }}
-                      >
-                        {hoveredNode.category}
-                      </span>
-                      <h5 className="text-xs font-bold text-white font-mono">{hoveredNode.label}</h5>
-                    </div>
-                    <p className="text-[11px] leading-relaxed text-slate-400 font-sans font-medium">
-                      {hoveredNode.description}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
+              {/* HUD Telemetry Stats overlaying the centerpiece */}
+              <div className="absolute top-2 left-2 font-mono text-[9px] text-slate-500 tracking-wider text-left leading-tight pointer-events-none">
+                <p>SYS.LOCK: ACTIVE</p>
+                <p>GRID.SYNC: OK</p>
+              </div>
+              <div className="absolute bottom-2 right-2 font-mono text-[9px] text-slate-500 tracking-wider text-right leading-tight pointer-events-none">
+                <p>E.ROTATION: 0.15rad/s</p>
+                <p>H.BEAM: 486nm</p>
+              </div>
             </div>
+
+          </div>
+
+          {/* RIGHT COLUMN (lg:col-span-4): Live Status Widgets */}
+          <div className="lg:col-span-4 flex flex-col gap-6 order-3 justify-center">
+            
+            <motion.div
+              variants={panelVariants}
+              whileHover={{ y: -4, borderColor: "rgba(59, 130, 246, 0.25)" }}
+              className="relative p-6 rounded-2xl bg-slate-950/45 border border-white/10 backdrop-blur-md transition-all duration-300 shadow-xl overflow-hidden"
+            >
+              {/* Telemetry Corner Accents */}
+              <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2 border-cyan-500/50"></div>
+              <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2 border-cyan-500/50"></div>
+
+              <div className="flex items-center gap-2 mb-5 pb-2 border-b border-white/5 select-none">
+                <Activity className="h-4.5 w-4.5 text-cyan-400 animate-pulse" />
+                <h3 className="text-[10px] font-mono font-bold tracking-[0.2em] text-white uppercase">
+                  Real-Time Telemetry
+                </h3>
+              </div>
+
+              {/* Status readout items */}
+              <div className="space-y-4 font-mono text-left select-none">
+                
+                {/* 1. Status */}
+                <div className="flex items-start gap-3">
+                  <div className="text-[14px] leading-none pt-0.5">🟢</div>
+                  <div className="space-y-1">
+                    <p className="text-[9px] font-bold text-slate-500 tracking-wider uppercase">Current Status</p>
+                    <p className="text-xs font-bold text-slate-200 uppercase tracking-wide">Learning & Building</p>
+                  </div>
+                </div>
+
+                {/* 2. Location */}
+                <div className="flex items-start gap-3">
+                  <div className="text-[14px] leading-none pt-0.5"><MapPin className="h-3.5 w-3.5 text-blue-400" /></div>
+                  <div className="space-y-1">
+                    <p className="text-[9px] font-bold text-slate-500 tracking-wider uppercase">Primary Location</p>
+                    <p className="text-xs font-bold text-slate-200 tracking-wide">Pune, India</p>
+                    <p className="text-[8px] font-medium text-slate-500">18.5204° N, 73.8567° E</p>
+                  </div>
+                </div>
+
+                {/* 3. Education */}
+                <div className="flex items-start gap-3">
+                  <div className="text-[14px] leading-none pt-0.5"><GraduationCap className="h-3.5 w-3.5 text-purple-400" /></div>
+                  <div className="space-y-1">
+                    <p className="text-[9px] font-bold text-slate-500 tracking-wider uppercase">Education</p>
+                    <p className="text-xs font-bold text-slate-200 leading-tight">Master of Computer Applications (MCA)</p>
+                    <p className="text-[8px] font-medium text-purple-400 uppercase tracking-widest font-semibold">JSPM University</p>
+                  </div>
+                </div>
+
+                {/* 4. Certifications */}
+                <div className="flex items-start gap-3">
+                  <div className="text-[14px] leading-none pt-0.5"><Award className="h-3.5 w-3.5 text-cyan-400" /></div>
+                  <div className="space-y-1">
+                    <p className="text-[9px] font-bold text-slate-500 tracking-wider uppercase">Certifications</p>
+                    <p className="text-xs font-bold text-slate-200">Microsoft Certified</p>
+                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                      <span className="text-[8px] px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold uppercase tracking-wider">AZ-900</span>
+                      <span className="text-[8px] px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold uppercase tracking-wider">PL-900</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5. Internship */}
+                <div className="flex items-start gap-3">
+                  <div className="text-[14px] leading-none pt-0.5"><Briefcase className="h-3.5 w-3.5 text-orange-450" /></div>
+                  <div className="space-y-1">
+                    <p className="text-[9px] font-bold text-slate-500 tracking-wider uppercase">Internship History</p>
+                    <p className="text-xs font-bold text-slate-200">Data Analyst Intern</p>
+                    <p className="text-[8.5px] font-medium text-slate-400 leading-none">KasNet Technologies Pvt. Ltd.</p>
+                  </div>
+                </div>
+
+              </div>
+
+            </motion.div>
           </div>
 
         </div>
