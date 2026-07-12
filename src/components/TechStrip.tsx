@@ -135,8 +135,8 @@ export default function TechStrip() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 35, filter: 'blur(8px)' }}
-      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      initial={{ opacity: 0, y: 35 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.85, ease: "easeOut" }}
       ref={containerRef}
