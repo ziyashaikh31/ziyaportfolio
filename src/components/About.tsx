@@ -63,42 +63,68 @@ export default function About() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={containerVariants}
-        className="mx-auto max-w-3xl relative z-10 space-y-12"
+        className="mx-auto max-w-4xl relative z-10 space-y-10"
       >
         {/* Section Header */}
         <div className="select-none text-left">
           <AnimatedHeading text="About Me" />
         </div>
 
-        {/* About Me content */}
+        {/* About Me content in clean glass container */}
         <motion.div
           variants={panelVariants}
-          className="space-y-5 text-slate-350 text-base md:text-[17px] leading-relaxed font-sans font-medium text-left"
+          className="relative p-6 md:p-8 rounded-2xl bg-slate-950/40 border border-blue-500/15 backdrop-blur-md shadow-xl text-slate-350 text-base md:text-[17px] leading-relaxed font-sans font-medium text-left"
         >
-          <p>
-            Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold">Shaikh Ziya</span>, an MCA student at <span className="text-white font-semibold">JSPM University</span> and an aspiring <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold">DevOps Engineer</span>. I enjoy building practical projects and continuously learning modern cloud and DevOps technologies through hands-on experience.
-          </p>
-          <p>
-            I completed my internship at <span className="text-purple-400 font-bold">KasNet Technologies Pvt. Ltd.</span>, where I gained practical exposure to Microsoft Azure and real-world cloud environments. This experience strengthened my understanding of industry practices and modern technologies.
-          </p>
-          <p>
-            My goal is to build reliable, scalable, and efficient cloud solutions while continuously improving my technical knowledge and contributing to real-world DevOps projects.
-          </p>
+          <div className="space-y-5">
+            <p>
+              Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold">Shaikh Ziya</span>, an MCA student at <span className="text-white font-semibold">JSPM University</span> and an aspiring <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold">DevOps Engineer</span>. I enjoy building practical projects and continuously learning modern cloud and DevOps technologies through hands-on experience.
+            </p>
+            <p>
+              I completed my internship at <span className="text-purple-400 font-bold">KasNet Technologies Pvt. Ltd.</span>, where I gained practical exposure to Microsoft Azure and real-world cloud environments. This experience strengthened my understanding of industry practices and modern technologies.
+            </p>
+            <p>
+              My goal is to build reliable, scalable, and efficient cloud solutions while continuously improving my technical knowledge and contributing to real-world DevOps projects.
+            </p>
+          </div>
         </motion.div>
 
-        {/* Achievements Subsection */}
-        <motion.div variants={itemVariants} className="space-y-4 text-left pt-2">
-          <h3 className="text-lg font-bold font-space text-white tracking-wide">Achievements</h3>
-          <ul className="space-y-4 pl-1">
-            <li className="flex items-start gap-3.5 text-slate-350 text-[14px] leading-relaxed">
-              <span className="text-lg shrink-0 select-none">🥈</span>
-              <span>Secured <strong className="text-white font-semibold">2nd Place</strong> in a University-Level Tech Fest, representing my college.</span>
-            </li>
-            <li className="flex items-start gap-3.5 text-slate-350 text-[14px] leading-relaxed">
-              <span className="text-lg shrink-0 select-none">🚀</span>
-              <span>Selected among the <strong className="text-white font-semibold">Top 50 teams</strong> out of 564 teams in the Smart India Hackathon (SIH) Internal Hackathon.</span>
-            </li>
-          </ul>
+        {/* Responsive Two-Column Layout */}
+        <motion.div 
+          variants={itemVariants} 
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 pt-4 text-left"
+        >
+          {/* Left Column: Achievements */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold font-space text-white tracking-wide border-b border-white/5 pb-2">Achievements</h3>
+            <ul className="space-y-4 pl-1">
+              <li className="flex items-start gap-3 text-slate-350 text-[14px] leading-relaxed">
+                <span className="text-lg shrink-0 select-none">🥈</span>
+                <span>Secured <strong className="text-white font-semibold">2nd Place</strong> in a University-Level Tech Fest, representing my college.</span>
+              </li>
+              <li className="flex items-start gap-3 text-slate-355 text-[14px] leading-relaxed">
+                <span className="text-lg shrink-0 select-none">🚀</span>
+                <span>Selected among the <strong className="text-white font-semibold">Top 50 teams</strong> out of 564 teams in the Smart India Hackathon (SIH) Internal Hackathon.</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Right Column: Microsoft Certifications */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold font-space text-white tracking-wide border-b border-white/5 pb-2">Microsoft Certifications</h3>
+            <ul className="space-y-3.5 pl-1">
+              {[
+                "Microsoft Certified: Azure Fundamentals (AZ-900)",
+                "Microsoft Certified: Azure AI Fundamentals (AI-900)",
+                "Microsoft Certified: Azure Data Fundamentals (DP-900)",
+                "Microsoft Certified: Power Platform Fundamentals (PL-900)"
+              ].map((cert, index) => (
+                <li key={index} className="flex items-start gap-3 text-slate-350 text-[14px] leading-relaxed">
+                  <span className="text-cyan-400 font-bold shrink-0 select-none">✓</span>
+                  <span>{cert}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </motion.div>
 
       </motion.div>
