@@ -63,7 +63,7 @@ export default function About() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={containerVariants}
-        className="mx-auto max-w-4xl relative z-10 space-y-14"
+        className="mx-auto max-w-3xl relative z-10 space-y-12"
       >
         {/* Section Header */}
         <div className="select-none text-left">
@@ -88,7 +88,7 @@ export default function About() {
 
         {/* Achievements Subsection */}
         <motion.div variants={itemVariants} className="space-y-4 text-left pt-2">
-          <h3 className="text-base font-black font-space text-white uppercase tracking-wider">Achievements</h3>
+          <h3 className="text-lg font-bold font-space text-white tracking-wide">Achievements</h3>
           <ul className="space-y-4 pl-1">
             <li className="flex items-start gap-3.5 text-slate-350 text-[14px] leading-relaxed">
               <span className="text-lg shrink-0 select-none">🥈</span>
@@ -98,24 +98,6 @@ export default function About() {
               <span className="text-lg shrink-0 select-none">🚀</span>
               <span>Selected among the <strong className="text-white font-semibold">Top 50 teams</strong> out of 564 teams in the Smart India Hackathon (SIH) Internal Hackathon.</span>
             </li>
-          </ul>
-        </motion.div>
-
-        {/* Microsoft Certifications Subsection */}
-        <motion.div variants={itemVariants} className="space-y-4 text-left pt-2">
-          <h3 className="text-base font-black font-space text-white uppercase tracking-wider">Microsoft Certifications</h3>
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 pl-1">
-            {[
-              "Microsoft Certified: Azure Fundamentals (AZ-900)",
-              "Microsoft Certified: Azure AI Fundamentals (AI-900)",
-              "Microsoft Certified: Azure Data Fundamentals (DP-900)",
-              "Microsoft Certified: Power Platform Fundamentals (PL-900)"
-            ].map((cert, index) => (
-              <li key={index} className="flex items-start gap-3 text-slate-355 text-[14px] leading-relaxed">
-                <span className="text-cyan-400 font-bold shrink-0 select-none">✓</span>
-                <span>{cert}</span>
-              </li>
-            ))}
           </ul>
         </motion.div>
 
