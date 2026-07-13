@@ -61,6 +61,10 @@ export default function About() {
           background-size: 200% 200%;
           animation: border-gradient-shift 8s ease infinite;
         }
+        @keyframes achievements-shine {
+          0% { transform: translateX(-150%) skewX(-12deg); }
+          50%, 100% { transform: translateX(150%) skewX(-12deg); }
+        }
       `}} />
 
       {/* Mouse Track Glow */}
@@ -128,47 +132,133 @@ export default function About() {
         >
           <h3 className="text-lg font-bold font-space text-white tracking-wide border-b border-white/5 pb-2">Achievements</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
             
             {/* Achievement Card 1 */}
             <motion.div
-              whileHover={{ y: -4, borderColor: "rgba(59, 130, 246, 0.25)", boxShadow: "0 15px 30px -10px rgba(59, 130, 246, 0.15)" }}
-              className="relative p-5 rounded-[16px] bg-slate-950/40 border border-blue-500/10 backdrop-blur-md transition-all duration-300 group flex items-start gap-4"
+              whileHover={{ 
+                y: -8, 
+                scale: 1.03,
+                boxShadow: "0 20px 40px rgba(139,92,246,0.15), 0 20px 40px rgba(6,182,212,0.15)"
+              }}
+              transition={{ type: "spring", stiffness: 200, damping: 18 }}
+              className="relative p-[1.5px] rounded-[20px] overflow-hidden transition-all duration-300 group flex flex-col h-full bg-slate-950/40 border border-purple-500/10 hover:border-transparent cursor-default"
             >
-              <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-blue-500/40 rounded-tl-[16px]"></div>
-              <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-blue-500/40 rounded-br-[16px]"></div>
+              {/* Animated Gradient Border using purple -> cyan on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-border-shift -z-10"></div>
+              
+              {/* Inner Glass Container */}
+              <div className="relative p-6 pr-24 rounded-[18.5px] bg-slate-950/85 backdrop-blur-xl flex flex-col justify-between h-full w-full overflow-hidden">
+                
+                {/* Left accent vertical line */}
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-l-[18.5px] z-20"></div>
 
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_12px_rgba(59,130,246,0.15)] shrink-0">
-                <Trophy className="h-4.5 w-4.5" />
-              </div>
-              <div className="space-y-1">
-                <h4 className="text-sm font-bold text-white font-space">
-                  University Tech Fest
-                </h4>
-                <p className="text-slate-350 text-xs leading-relaxed">
-                  Secured 2nd Place in a University-Level Tech Fest, representing my college.
-                </p>
+                {/* Shiny Sweep Overlay on hover */}
+                <div className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 -translate-x-full group-hover:animate-[achievements-shine_1.8s_ease-in-out_infinite] z-25 pointer-events-none"></div>
+
+                {/* Subtle Animated Particles inside card */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[18.5px]">
+                  <motion.div
+                    animate={{ y: [-8, 8, -8], x: [-4, 4, -4], opacity: [0.2, 0.5, 0.2] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-1/4 left-1/3 w-1.5 h-1.5 rounded-full bg-purple-500/30"
+                  />
+                  <motion.div
+                    animate={{ y: [12, -12, 12], x: [6, -6, 6], opacity: [0.15, 0.45, 0.15] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    className="absolute bottom-1/4 right-1/3 w-1 h-1 rounded-full bg-cyan-400/30"
+                  />
+                </div>
+
+                {/* Radial glow background behind each card */}
+                <div className="absolute -inset-10 -z-20 bg-gradient-to-tr from-purple-500/5 via-transparent to-cyan-500/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                {/* Badge in top-right */}
+                <div className="absolute top-4 right-4 px-2.5 py-0.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-[9px] font-mono font-bold text-cyan-400 select-none">
+                  2nd Place
+                </div>
+
+                {/* Main content elements */}
+                <div className="flex items-start gap-4">
+                  <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-slate-950/80 border border-purple-500/20 text-white z-10 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <Trophy className="h-5 w-5 text-purple-400 group-hover:text-cyan-400 transition-colors" />
+                    <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-md -z-10 group-hover:bg-purple-500/40 transition-colors duration-300" />
+                  </div>
+                  
+                  <div className="space-y-1 select-none">
+                    <h4 className="text-sm md:text-base font-bold text-white font-space">
+                      University Tech Fest
+                    </h4>
+                    <p className="text-slate-350 text-xs md:text-sm leading-relaxed">
+                      Secured <span className="text-cyan-400 font-extrabold">2nd Place</span> in a University-Level Tech Fest, representing my college.
+                    </p>
+                  </div>
+                </div>
+
               </div>
             </motion.div>
 
             {/* Achievement Card 2 */}
             <motion.div
-              whileHover={{ y: -4, borderColor: "rgba(139, 92, 246, 0.25)", boxShadow: "0 15px 30px -10px rgba(139, 92, 246, 0.15)" }}
-              className="relative p-5 rounded-[16px] bg-slate-950/40 border border-purple-500/10 backdrop-blur-md transition-all duration-300 group flex items-start gap-4"
+              whileHover={{ 
+                y: -8, 
+                scale: 1.03,
+                boxShadow: "0 20px 40px rgba(139,92,246,0.15), 0 20px 40px rgba(6,182,212,0.15)"
+              }}
+              transition={{ type: "spring", stiffness: 200, damping: 18 }}
+              className="relative p-[1.5px] rounded-[20px] overflow-hidden transition-all duration-300 group flex flex-col h-full bg-slate-950/40 border border-purple-500/10 hover:border-transparent cursor-default"
             >
-              <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-purple-500/40 rounded-tl-[16px]"></div>
-              <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-purple-500/40 rounded-br-[16px]"></div>
+              {/* Animated Gradient Border using purple -> cyan on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-border-shift -z-10"></div>
+              
+              {/* Inner Glass Container */}
+              <div className="relative p-6 pr-28 rounded-[18.5px] bg-slate-950/85 backdrop-blur-xl flex flex-col justify-between h-full w-full overflow-hidden">
+                
+                {/* Left accent vertical line */}
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-l-[18.5px] z-20"></div>
 
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 shadow-[0_0_12px_rgba(139,92,246,0.15)] shrink-0">
-                <Rocket className="h-4.5 w-4.5" />
-              </div>
-              <div className="space-y-1">
-                <h4 className="text-sm font-bold text-white font-space">
-                  Smart India Hackathon
-                </h4>
-                <p className="text-slate-355 text-xs leading-relaxed">
-                  Selected among the Top 50 teams out of 564 teams in the Smart India Hackathon (SIH) Internal Hackathon.
-                </p>
+                {/* Shiny Sweep Overlay on hover */}
+                <div className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 -translate-x-full group-hover:animate-[achievements-shine_1.8s_ease-in-out_infinite] z-25 pointer-events-none"></div>
+
+                {/* Subtle Animated Particles inside card */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[18.5px]">
+                  <motion.div
+                    animate={{ y: [-8, 8, -8], x: [-4, 4, -4], opacity: [0.2, 0.5, 0.2] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-1/4 left-1/3 w-1.5 h-1.5 rounded-full bg-purple-500/30"
+                  />
+                  <motion.div
+                    animate={{ y: [12, -12, 12], x: [6, -6, 6], opacity: [0.15, 0.45, 0.15] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    className="absolute bottom-1/4 right-1/3 w-1 h-1 rounded-full bg-cyan-400/30"
+                  />
+                </div>
+
+                {/* Radial glow background behind each card */}
+                <div className="absolute -inset-10 -z-20 bg-gradient-to-tr from-purple-500/5 via-transparent to-cyan-500/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                {/* Badge in top-right */}
+                <div className="absolute top-4 right-4 px-2.5 py-0.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-[9px] font-mono font-bold text-purple-400 select-none">
+                  Top 50 / 564
+                </div>
+
+                {/* Main content elements */}
+                <div className="flex items-start gap-4">
+                  <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-slate-950/80 border border-cyan-500/20 text-white z-10 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <Rocket className="h-5 w-5 text-cyan-400 group-hover:text-purple-400 transition-colors" />
+                    <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-md -z-10 group-hover:bg-cyan-500/40 transition-colors duration-300" />
+                  </div>
+                  
+                  <div className="space-y-1 select-none">
+                    <h4 className="text-sm md:text-base font-bold text-white font-space">
+                      Smart India Hackathon
+                    </h4>
+                    <p className="text-slate-355 text-xs md:text-sm leading-relaxed">
+                      Selected among the <span className="text-cyan-400 font-extrabold">Top 50 teams</span> out of <span className="text-cyan-400 font-extrabold">564 teams</span> in the Smart India Hackathon (SIH) Internal Hackathon.
+                    </p>
+                  </div>
+                </div>
+
               </div>
             </motion.div>
 
